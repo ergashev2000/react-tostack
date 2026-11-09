@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>react-tostack promo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Urbanist:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" />
+<style>
+  /* A 1280x720 scene recorded for the README. It plays once on load and sets window.__done. */
+  html, body { margin: 0; background: #050506; }
+  body { width: 1280px; height: 720px; overflow: hidden; font-family: Urbanist, system-ui, sans-serif; }
+  .stage { position: relative; width: 1280px; height: 720px; overflow: hidden;
+    background: radial-gradient(60% 55% at 50% 0%, #17171c 0%, #0a0a0c 55%, #050506 100%); }
+  .camera { position: absolute; inset: 0; transform-origin: 640px 0; transform: scale(1.9);
+    transition: transform 1.6s cubic-bezier(0.65, 0, 0.2, 1); }
+  .glow-floor { position: absolute; left: 50%; top: -120px; width: 900px; height: 420px; transform: translateX(-50%);
+    background: radial-gradient(closest-side, rgba(215, 254, 3, 0.07), transparent); opacity: 0; transition: opacity 1.2s ease; }
+  svg.trace { position: absolute; inset: 0; overflow: visible; }
+  .trace path { fill: none; stroke: rgba(255, 255, 255, 0.9); stroke-width: 1.4; stroke-linecap: round; opacity: 0; }
+  .dot { position: absolute; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%; background: #fff;
+    box-shadow: 0 0 10px 3px rgba(255, 255, 255, 0.85), 0 0 26px 8px rgba(160, 200, 255, 0.35); opacity: 0; }
+
+  .caption { position: absolute; left: 0; right: 0; bottom: 92px; text-align: center; color: #f2f2f4;
+    font: 600 34px/1.3 "JetBrains Mono", ui-monospace, monospace; letter-spacing: -0.5px; }
+  .caption span { display: inline-block; opacity: 0; filter: blur(8px); transform: translateY(10px);
+    transition: opacity 0.5s ease, filter 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.9, 0.2, 1); }
+  .caption span.on { opacity: 1; filter: blur(0); transform: none; }
+  .caption span.lime { color: #d7fe03; }
+  .caption.out span { opacity: 0; filter: blur(8px); transform: translateY(-8px); transition-duration: 0.35s; }
+
+  .cursor { position: absolute; left: 980px; top: 560px; width: 26px; height: 26px; opacity: 0; z-index: 50;
+    transition: left 0.9s cubic-bezier(0.65, 0, 0.25, 1), top 0.9s cubic-bezier(0.65, 0, 0.25, 1), opacity 0.3s ease, transform 0.15s ease; }
+  .cursor.down { transform: scale(0.86); }
+  .ripple { position: absolute; width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%;
+    border: 2px solid #d7fe03; opacity: 0; z-index: 49; }
+  .ripple.go { animation: ripple 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+  @keyframes ripple { 0% { opacity: 0.9; transform: scale(0.4); } 100% { opacity: 0; transform: scale(7); } }
+
+  .end { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 22px; opacity: 0;
+    transition: opacity 0.8s ease; color: #fff; }
+  .end.on { opacity: 1; }
+  .end h1 { margin: 0; font: 700 96px/1 Urbanist, sans-serif; letter-spacing: -0.045em; }
+  .end .pill { display: inline-flex; align-items: center; gap: 12px; height: 54px; padding: 0 24px; border-radius: 999px;
+    background: #141417; box-shadow: inset 0 0 0 1px #26262b; font: 400 20px/1 "JetBrains Mono", monospace; color: #e6e6ea; }
+  .end .pill i { width: 10px; height: 10px; border-radius: 50%; background: #d7fe03; box-shadow: 0 0 12px #d7fe03; }
+  .end p { margin: 0; font: 500 18px/1.4 Urbanist, sans-serif; color: #8d8d95; }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="glow-floor" id="floor"></div>
+  <div class="camera" id="camera">
+    <svg class="trace" id="trace" width="1280" height="720">
+      <path id="pl" d="M476 0A14 14 0 0 1 490 14V22A22 22 0 0 0 512 44H640" />
+      <path id="pr" d="M804 0A14 14 0 0 0 790 14V22A22 22 0 0 1 768 44H640" />
+    </svg>
+    <div class="dot" id="dl"></div>
+    <div class="dot" id="dr"></div>
+  </div>
+  <div class="caption" id="caption"></div>
+  <div class="ripple" id="ripple"></div>
+  <svg class="cursor" id="cursor" viewBox="0 0 24 24"><path d="M4 2l15 11.5-6.6.9 3.9 7.4-2.8 1.4-3.9-7.5L4 20z" fill="#fff" stroke="#000" stroke-width="1.2" stroke-linejoin="round"/></svg>
+  <div class="end" id="end">
+    <h1>react-tostack</h1>
+    <span class="pill"><i></i>npm i react-tostack</span>
+    <p>Dynamic Island toasts for React</p>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="../demo/tostack.iife.js"></script>
+<script>
+  const { Toaster, toast } = Tostack;
+  const $ = (id) => document.getElementById(id);
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const camera = $('camera');
+
+  ReactDOM.createRoot(document.createElement('div')).render(
+    React.createElement(Toaster, {
+      container: camera, theme: 'dark', glow: true, position: 'top-center',
+      containerStyle: { '--tostack-lume': '#d7fe03', '--tostack-on-lume': '#000' },
+      toastOptions: { duration: Infinity },
+    }),
+  );
+
+  // Two points of light draw the island outline from its top corners to the middle.
+  function trace(ms) {
+    const paths = [$('pl'), $('pr')], dots = [$('dl'), $('dr')];
+    const len = paths[0].getTotalLength();
+    paths.forEach((p) => { p.style.strokeDasharray = len; p.style.strokeDashoffset = len; });
+    dots.forEach((d) => (d.style.opacity = 1));
+    paths.forEach((p) => (p.style.opacity = 1));
+    const t0 = performance.now();
+    return new Promise((done) => {
+      const step = (now) => {
+        const k = Math.min(1, (now - t0) / ms);
+        const e = 1 - Math.pow(1 - k, 3);
+        paths.forEach((p, i) => {
+          p.style.strokeDashoffset = len * (1 - e);
+          const pt = p.getPointAtLength(len * e);
+          dots[i].style.left = pt.x + 'px';
+          dots[i].style.top = pt.y + 'px';
+        });
+        if (k < 1) requestAnimationFrame(step); else done();
+      };
+      requestAnimationFrame(step);
+    });
+  }
+
+  async function caption(parts) {
+    const el = $('caption');
+    el.className = 'caption';
+    el.innerHTML = '';
+    const spans = [];
+    parts.forEach(([text, lime]) => text.split(' ').forEach((w) => {
+      const s = document.createElement('span');
+      s.textContent = w + ' ';
+      if (lime) s.className = 'lime';
+      el.appendChild(s);
+      spans.push(s);
+    }));
+    for (const s of spans) { s.classList.add('on'); await sleep(90); }
+  }
+  const hideCaption = () => $('caption').classList.add('out');
+
+  const cursor = $('cursor');
+  const moveTo = (x, y) => { cursor.style.left = x + 'px'; cursor.style.top = y + 'px'; };
+  async function click(x, y) {
+    cursor.classList.add('down');
+    const r = $('ripple');
+    r.style.left = x + 'px'; r.style.top = y + 'px';
+    r.classList.remove('go'); void r.offsetWidth; r.classList.add('go');
+    await sleep(140);
+    cursor.classList.remove('down');
+  }
+  const front = () => [...document.querySelectorAll('.tostack-t')].find((v) => v.style.zIndex === '100');
+  const center = (el) => { const r = el.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+
+  async function play() {
+    await document.fonts.ready;
+    await sleep(500);
+
+    // 1. Light draws the island, then the island appears in its place.
+    await trace(1300);
+    $('floor').style.opacity = 1;
+    const id = toast.loading('Deploying to production…');
+    ['pl', 'pr', 'dl', 'dr'].forEach((k) => { $(k).style.transition = 'opacity .5s'; $(k).style.opacity = 0; });
+    await sleep(1700);
+
+    // 2. Same island, new message.
+    toast.success('Deployed', { id, accessory: 'v2.4.0' });
+    await sleep(900);
+    camera.style.transform = 'scale(1.35)';
+    await caption([['One island.'], ['Every message.', true]]);
+    await sleep(1500);
+    hideCaption();
+
+    // 3. Three at once, layered.
+    toast.info('Build cached', { accessory: '1.2 s' });
+    await sleep(180);
+    toast.warning('Storage at 92%');
+    await sleep(180);
+    toast.error('Payment declined', { description: 'Card ending 2207 has no funds.' });
+    await sleep(700);
+    await caption([['Stacks up to'], ['three.', true]]);
+    await sleep(900);
+
+    // 4. Hover fans the stack out.
+    cursor.style.opacity = 1;
+    let [x, y] = center(front());
+    moveTo(x + 40, y + 6);
+    await sleep(950);
+    front().dispatchEvent(new PointerEvent('pointerover', { bubbles: true, pointerType: 'mouse' }));
+    hideCaption();
+    await sleep(500);
+    await caption([['Hover to see'], ['all of them.', true]]);
+    await sleep(1600);
+    front().dispatchEvent(new PointerEvent('pointerout', { bubbles: true, pointerType: 'mouse', relatedTarget: document.body }));
+    moveTo(930, 470);
+    hideCaption();
+    toast.remove();
+    await sleep(500);
+
+    // 5. A message opens with actions; reply from the island.
+    toast('Dilnoza replied', {
+      icon: '💬', accessory: 'now', expanded: true,
+      description: 'Love the new release. Can you send me the changelog?',
+      actions: [{ label: 'Reply', primary: true, onClick: () => { toast.success('Reply sent'); } }, { label: 'Later' }],
+    });
+    await sleep(900);
+    await caption([['Act right from'], ['the island.', true]]);
+    await sleep(500);
+    const reply = [...document.querySelectorAll('.tostack-btn')].find((b) => b.textContent === 'Reply');
+    [x, y] = center(reply);
+    moveTo(x + 6, y + 4);
+    await sleep(1000);
+    await click(x + 6, y + 4);
+    reply.click();
+    await sleep(1500);
+    hideCaption();
+    cursor.style.opacity = 0;
+
+    // 6. Pull back to the end card.
+    camera.style.transform = 'scale(1)';
+    await sleep(900);
+    toast.dismiss();
+    $('floor').style.opacity = 0;
+    await sleep(500);
+    $('end').classList.add('on');
+    await sleep(2600);
+    window.__done = true;
+  }
+  window.__start = play;
+  if (!/record/.test(location.search)) play();
+</script>
+</body>
+</html>

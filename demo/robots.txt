@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /audit.js
+
+Sitemap: https://react-tostack.islomjon.uz/sitemap.xml

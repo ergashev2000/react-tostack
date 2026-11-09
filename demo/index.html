@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>react-tostack: iOS Dynamic Island toasts for React</title>
+<meta name="description" content="Toast notifications for React and TypeScript that grow out of the screen edge like the iOS Dynamic Island, morph on springs and stack up to three." />
+<meta name="robots" content="index, follow" />
+<meta name="author" content="Islomjon" />
+<meta name="keywords" content="react toast, react notifications, dynamic island, ios toast, typescript toast, react-hot-toast alternative, sonner alternative, react-tostack" />
+<meta name="theme-color" content="#f5f5f8" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#0d0d0f" media="(prefers-color-scheme: dark)" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%23000'/%3E%3Cpath d='M8 8h16v2a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6z' fill='%23d7fe03'/%3E%3C/svg%3E" />
+
+<link rel="canonical" href="https://react-tostack.islomjon.uz/" />
+
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://react-tostack.islomjon.uz/" />
+<meta property="og:site_name" content="react-tostack" />
+<meta property="og:title" content="react-tostack: iOS Dynamic Island toasts for React" />
+<meta property="og:description" content="Toasts that grow out of the screen edge, morph between messages on springs, stack up to three, and open for details. Written in TypeScript." />
+<meta property="og:image" content="https://react-tostack.islomjon.uz/og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="react-tostack: npm i react-tostack" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="react-tostack: iOS Dynamic Island toasts for React" />
+<meta name="twitter:description" content="Toasts that grow out of the screen edge, morph on springs, stack up to three, and open for details." />
+<meta name="twitter:image" content="https://react-tostack.islomjon.uz/og.png" />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "react-tostack",
+  "description": "Toast notifications for React that behave like the iOS Dynamic Island: spring physics, stacking, swipe or close to dismiss, light and dark themes.",
+  "url": "https://react-tostack.islomjon.uz/",
+  "codeRepository": "https://github.com/ergashev2000/react-tostack",
+  "programmingLanguage": ["TypeScript", "JavaScript"],
+  "runtimePlatform": "React 18",
+  "license": "https://opensource.org/licenses/MIT",
+  "author": { "@type": "Person", "name": "Islomjon" },
+  "keywords": "react, toast, notifications, dynamic island, typescript"
+}
+</script>
+<script>
+  // Match the system theme before the first paint, so there is no flash.
+  document.documentElement.dataset.theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+</script>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap" />
+<style>
+  /* Three blocks, top to bottom: intro, examples (buttons + code), position (code + buttons). */
+  :root {
+    --ground: #f5f5f8;
+    --panel: #ebebf0;
+    --button: #ffffff;
+    --ink: #000000;
+    --ink-2: #6e6e76;
+    --lime: #d7fe03;
+    --code: #000000;
+    --code-dim: #8d8d95;
+    --font: "Urbanist", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    color-scheme: light;
+  }
+  :root[data-theme="dark"] {
+    --ground: #0d0d0f;
+    --panel: #18181b;
+    --button: #232327;
+    --ink: #ffffff;
+    --ink-2: #94949c;
+    --code: #000000;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--ground); color: var(--ink); font: 400 16px/1.45 var(--font); -webkit-font-smoothing: antialiased; transition: background-color 0.3s ease, color 0.3s ease; }
+  button { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid #83af3b; outline-offset: 2px; }
+
+  .page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: max(48px, calc(env(safe-area-inset-top) + 32px)) max(16px, env(safe-area-inset-right)) 80px max(16px, env(safe-area-inset-left));
+  }
+
+  .hero { text-align: center; padding: 48px 0 72px; }
+  .version { display: inline-block; margin-bottom: 20px; padding: 6px 12px; border-radius: 999px; background: var(--panel); font-size: 13px; font-weight: 600; color: var(--ink-2); }
+  h1 { margin: 0; font-size: clamp(44px, 8vw, 76px); line-height: 1; font-weight: 600; letter-spacing: -0.04em; }
+  .hero p { margin: 18px auto 32px; max-width: 44ch; text-wrap: balance; color: var(--ink-2); font-size: 19px; line-height: 1.5; }
+  .cta { display: inline-flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .big {
+    height: 54px; padding: 0 26px; border: 0; border-radius: 999px; cursor: pointer; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 10px; font: 600 16px/1 var(--font);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
+  }
+  .big:active { transform: scale(0.96); }
+  .big.main { background: var(--ink); color: var(--ground); }
+  .big.main i { width: 10px; height: 10px; border-radius: 50%; background: var(--lime); }
+  .big.plain { background: var(--button); color: var(--ink); }
+  .big svg { width: 18px; height: 18px; }
+
+  .start { background: var(--button); border-radius: 22px; padding: 8px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 56px; }
+  @media (max-width: 760px) { .start { grid-template-columns: minmax(0, 1fr); } }
+  .step { padding: 16px; border-radius: 16px; background: var(--panel); min-width: 0; }
+  .step b { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; margin-bottom: 12px; }
+  .step b span { width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: var(--ground); display: grid; place-items: center; font-size: 12px; }
+  .line { display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 6px 0 14px; border-radius: 12px; background: var(--code); color: #fff; }
+  .line code { flex: 1; min-width: 0; font: 13px/1 var(--mono); white-space: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .line code::-webkit-scrollbar { display: none; }
+  .line code .s { color: var(--lime); }
+  .copy {
+    height: 32px; padding: 0 12px; border: 0; border-radius: 9px; cursor: pointer; flex: none;
+    background: #1f1f23; color: #fff; font: 600 12px/1 var(--font);
+  }
+  .copy:hover { background: #2a2a2f; }
+
+  footer { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--panel); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; color: var(--ink-2); font-size: 14px; }
+  footer a { color: var(--ink); }
+  footer span:last-child { display: flex; gap: 18px; }
+
+  h2 { margin: 0 0 16px 4px; font-size: 26px; font-weight: 600; letter-spacing: -0.02em; }
+  .block { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: stretch; margin-bottom: 56px; }
+  .block.flip { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); }
+  @media (max-width: 760px) { .block, .block.flip { grid-template-columns: minmax(0, 1fr); } .block.flip .code { order: 2; } }
+
+  .panel { background: var(--panel); border-radius: 22px; padding: 12px; }
+  .buttons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .positions { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .btn {
+    height: 48px; padding: 0 14px; border: 0; border-radius: 14px; background: var(--button); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px; font-weight: 600;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .btn:hover { filter: brightness(0.98); }
+  .btn:active { transform: scale(0.97); }
+  .btn[aria-pressed="true"] { background: var(--ink); color: var(--ground); }
+  .btn .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .positions .btn { font-weight: 500; font-size: 14px; }
+
+  .code {
+    margin: 0; background: var(--code); color: #fff; border-radius: 22px; padding: 24px;
+    display: flex; align-items: center; min-height: 180px; overflow-x: auto;
+    font: 14px/23px var(--mono);
+  }
+  .code pre { margin: 0; font: inherit; }
+  .code .s { color: var(--lime); }
+  .code .k { color: var(--code-dim); }
+
+  .sub { margin: 18px 4px 10px; font-size: 14px; color: var(--ink-2); }
+  .sub:first-child { margin-top: 4px; }
+  .toggle .dot { background: #c8c8d0; transition: background-color 0.2s ease; }
+  .toggle[aria-pressed="true"] .dot { background: var(--lime); }
+  .toggle { justify-content: flex-start; padding-left: 18px; }
+
+  @media (prefers-reduced-motion: reduce) { * { transition-duration: 0.01s !important; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <main class="page">
+    <header class="hero">
+      <span class="version">Version 0.1.0, MIT</span>
+      <h1>react-tostack</h1>
+      <p>Toasts for React that grow out of the top of the screen like the iOS Dynamic Island, and change shape to fit each message.</p>
+      <div class="cta"><a class="big plain" href="https://github.com/ergashev2000/react-tostack">GitHub</a></div>
+    </header>
+    <h2>Quick start</h2>
+    <ol>
+      <li>Install: <code>npm i react-tostack</code></li>
+      <li>Add <code>&lt;Toaster /&gt;</code> once near the root of your app.</li>
+      <li>Call <code>toast('Hello')</code> anywhere.</li>
+    </ol>
+    <h2>Features</h2>
+    <ul>
+      <li>Dynamic Island mode that morphs one toast in place, or stacked toasts in six positions</li>
+      <li>Spring physics, up to three toasts at once with a queue, hover to see all</li>
+      <li>Close button, optional swipe to dismiss, Escape to close, expandable details and actions</li>
+      <li>Promise, loading, success, error, warning, info and custom JSX toasts</li>
+      <li>Light, dark and system themes, glass or solid surface, TypeScript types included</li>
+    </ul>
+    <noscript><p>Turn on JavaScript to try the live examples.</p></noscript>
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="./tostack.iife.js"></script>
+<script>
+  const { useState } = React;
+  const h = React.createElement;
+  const { Toaster, toast } = Tostack;
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const GIT = 'M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 00-1.3-3.2 4.2 4.2 0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 00-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 00-.1 3.2A4.6 4.6 0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21';
+  const svg = (d) => h('svg', { viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true }, h('path', { d }));
+
+  function Custom() {
+    return h('div', { style: { display: 'flex', alignItems: 'center', gap: 12, padding: '10px 18px 10px 10px', height: 60 } },
+      h('div', { style: { width: 40, height: 40, flex: 'none', borderRadius: '50%', background: '#d7fe03', color: '#000', display: 'grid', placeItems: 'center', fontWeight: 700 } }, 'RF'),
+      h('div', { style: { minWidth: 0 } },
+        h('div', { style: { fontSize: 15, fontWeight: 600 } }, 'Robert Fox'),
+        h('div', { style: { fontSize: 13, color: 'var(--tostack-fg2)' } }, 'Sent you money')),
+      h('div', { style: { marginLeft: 'auto', paddingLeft: 16, fontWeight: 700, color: 'var(--tostack-green)' } }, '+$280.00'));
+  }
+
+  // Each example keeps the call it makes, so the code box can show it.
+  const EXAMPLES = [
+    { id: 'success', label: 'Success', dot: '#34c759',
+      code: "toast.success('Changes saved')",
+      run: () => toast.success('Changes saved') },
+    { id: 'error', label: 'Error', dot: '#ff3b30',
+      code: "toast.error('Upload failed')",
+      run: () => toast.error('Upload failed') },
+    { id: 'promise', label: 'Promise', dot: '#83af3b',
+      code: "toast.promise(save(), {\n  loading: 'Saving…',\n  success: 'Saved',\n  error: 'Could not save',\n})",
+      run: () => toast.promise(sleep(1600), { loading: 'Saving…', success: 'Saved', error: 'Could not save' }) },
+    { id: 'loading', label: 'Loading', dot: '#8e8e93',
+      code: "const id = toast.loading('Uploading…')\n\n// when it is done\ntoast.success('Uploaded', { id })",
+      run: async () => { const id = toast.loading('Uploading…'); await sleep(2000); toast.success('Uploaded', { id }); } },
+    { id: 'details', label: 'With details', dot: '#ff9500',
+      code: "toast.warning('Storage almost full', {\n  description: 'Free up space to keep backups on.',\n  actions: [{ label: 'Manage', primary: true }],\n})",
+      run: () => toast.warning('Storage almost full', { description: 'Free up space to keep backups on.', actions: [{ label: 'Manage', primary: true }, { label: 'Later' }] }) },
+    { id: 'emoji', label: 'Emoji', dot: '#007aff',
+      code: "toast('Good job!', { icon: '👏' })",
+      run: () => toast('Good job!', { icon: '👏' }) },
+    { id: 'info', label: 'Info', dot: '#5ac8fa',
+      code: "toast.info('New version available')",
+      run: () => toast.info('New version available') },
+    { id: 'custom', label: 'JSX content', dot: '#d7fe03',
+      code: "toast.custom(<Payment />)",
+      run: () => toast.custom(h(Custom), { duration: 4000 }) },
+    { id: 'stack', label: 'Five at once', dot: '#5856d6',
+      code: "// Three show, two wait.\n// Hover the stack to see all of them.\ntoast.success('Photo saved')\ntoast.info('2 new messages')\ntoast.warning('Battery at 10%')",
+      run: async () => {
+        const list = [
+          () => toast.success('Photo saved'),
+          () => toast.info('2 new messages'),
+          () => toast.warning('Battery at 10%'),
+          () => toast.success('Backup complete'),
+          () => toast('Do not disturb is on', { icon: '🌙' }),
+        ];
+        for (const f of list) { f(); await sleep(140); }
+      } },
+    { id: 'swipe', label: 'Swipe to close', dot: '#ff2d55',
+      code: "toast.info('Swipe me up', {\n  dismissible: true,\n  closeButton: false,\n})",
+      run: () => toast.info('Swipe me up', { dismissible: true, closeButton: false, duration: 6000 }) },
+  ];
+
+  const POSITIONS = ['top-left', 'top-center', 'top-right', 'bottom-left', 'bottom-center', 'bottom-right'];
+
+  function hl(code) {
+    return code
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/('[^']*'|"[^"]*")/g, '<span class="s">$1</span>')
+      .replace(/(^|\n)(\/\/[^\n]*)/g, '$1<span class="k">$2</span>')
+      .replace(/\b(const)\b/g, '<span class="k">$1</span>');
+  }
+
+  function App() {
+    const [example, setExample] = useState(EXAMPLES[0]);
+    const [dark, setDark] = useState(() => matchMedia('(prefers-color-scheme: dark)').matches);
+    // True once the visitor picks a theme by hand; until then the page follows the system.
+    const [themeSet, setThemeSet] = useState(false);
+    const [position, setPosition] = useState('top-center');
+    const [island, setIsland] = useState(true);
+    const [glow, setGlow] = useState(false);
+    const [closeBtn, setCloseBtn] = useState(true);
+    const [rich, setRich] = useState(false);
+    const [solid, setSolid] = useState(false);
+    const [reverse, setReverse] = useState(false);
+    const [swipe, setSwipe] = useState(false);
+    const [copied, setCopied] = useState('');
+
+    React.useEffect(() => { document.documentElement.dataset.theme = dark ? 'dark' : 'light'; }, [dark]);
+    // Follow the system when it switches between light and dark.
+    React.useEffect(() => {
+      const mq = matchMedia('(prefers-color-scheme: dark)');
+      const onChange = () => { if (!themeSet) setDark(mq.matches); };
+      mq.addEventListener('change', onChange);
+      return () => mq.removeEventListener('change', onChange);
+    }, [themeSet]);
+
+    const run = (ex) => {
+      setExample(ex);
+      ex.run();
+    };
+    const move = (p) => {
+      setPosition(p);
+      setTimeout(() => toast.success('Now at ' + p), 50);
+    };
+    const copy = (text) => {
+      const done = () => { setCopied(text); toast.success('Copied'); setTimeout(() => setCopied(''), 1600); };
+      try { navigator.clipboard.writeText(text).then(done, () => {}); } catch (e) {}
+    };
+
+    // The hero demo: one island that loads, morphs, stacks and opens.
+    const play = async () => {
+      const id = toast.loading('Uploading photo…');
+      await sleep(1500);
+      toast.success('Photo uploaded', { id, accessory: '2.4 MB' });
+      await sleep(1700);
+      toast.info('Shared with 3 people');
+      await sleep(250);
+      toast('Dilnoza replied', {
+        icon: '💬', accessory: 'now', expanded: true,
+        description: 'Love this one. Can you send the full album?',
+        actions: [{ label: 'Reply', primary: true }, { label: 'Later' }],
+      });
+    };
+
+    // Flip a setting, then show a toast so the change is visible right away.
+    const OPTIONS = [
+      { id: 'dark', label: 'Dark mode', on: dark, set: setDark, prop: 'theme="dark"', say: (v) => (v ? 'Dark mode on' : 'Dark mode off') },
+      { id: 'island', label: 'Dynamic Island', on: island, set: setIsland, prop: 'island={false}', invert: true, say: (v) => (v ? 'Island mode on' : 'Stacked toasts') },
+      { id: 'close', label: 'Close button', on: closeBtn, set: setCloseBtn, prop: 'closeButton={false}', invert: true, say: (v) => (v ? 'Close button on' : 'Close button off') },
+      { id: 'glow', label: 'Glow edge', on: glow, set: setGlow, prop: 'glow', say: (v) => (v ? 'Glow edge on' : 'Glow edge off') },
+      { id: 'rich', label: 'Rich colors', on: rich, set: setRich, prop: 'richColors', say: (v) => (v ? 'Rich colors on' : 'Rich colors off') },
+      { id: 'solid', label: 'Solid surface', on: solid, set: setSolid, prop: 'material="solid"', say: (v) => (v ? 'Solid surface on' : 'Glass surface on') },
+      { id: 'swipe', label: 'Swipe to close', on: swipe, set: setSwipe, prop: 'toastOptions={{ dismissible: true }}', say: (v) => (v ? 'Swipe to close on' : 'Swipe to close off') },
+      { id: 'reverse', label: 'Reverse order', on: reverse, set: setReverse, prop: 'reverseOrder', say: (v) => (v ? 'Reverse order on' : 'Reverse order off') },
+    ];
+    const flip = (o) => {
+      const next = !o.on;
+      if (o.id === 'dark') setThemeSet(true);
+      o.set(next);
+      setTimeout(() => toast.success(o.say(next)), 60);
+    };
+    const toaster = ['<Toaster', `  position="${position}"`]
+      // Following the system is the default, so the theme prop only shows up after a manual pick.
+      .concat(themeSet ? [`  theme="${dark ? 'dark' : 'light'}"`] : [])
+      .concat(OPTIONS.filter((o) => o.id !== 'dark' && (o.invert ? !o.on : o.on)).map((o) => '  ' + o.prop))
+      .concat(['/>']).join('\n');
+
+    return h(React.Fragment, null,
+      h(Toaster, {
+        position, theme: dark ? 'dark' : 'light', island: island && position.endsWith('center'), glow,
+        closeButton: closeBtn, richColors: rich, material: solid ? 'solid' : 'glass', reverseOrder: reverse,
+        toastOptions: { dismissible: swipe },
+        containerStyle: { '--tostack-lume': '#d7fe03', '--tostack-on-lume': '#000000' },
+      }),
+      h('main', { className: 'page' },
+        h('header', { className: 'hero' },
+          h('span', { className: 'version' }, 'Version 0.1.0, MIT'),
+          h('h1', null, 'react-tostack'),
+          h('p', null, 'Toasts for React that grow out of the top of the screen like the iOS Dynamic Island, and change shape to fit each message.'),
+          h('div', { className: 'cta' },
+            h('button', { type: 'button', className: 'big main', onClick: play }, h('i'), 'Play the demo'),
+            h('a', { className: 'big plain', href: 'https://github.com/ergashev2000/react-tostack', target: '_blank', rel: 'noreferrer' }, svg(GIT), 'GitHub'))),
+
+        h('h2', null, 'Quick start'),
+        h('section', { className: 'start' },
+          [
+            ['Install', 'npm i react-tostack', 'npm i react-tostack'],
+            ['Add the Toaster', '<Toaster />', '<Toaster />'],
+            ['Call it anywhere', "toast('Hello')", "toast('Hello')"],
+          ].map(([title, shown, text], i) => h('div', { key: title, className: 'step' },
+            h('b', null, h('span', null, i + 1), title),
+            h('div', { className: 'line' },
+              h('code', { dangerouslySetInnerHTML: { __html: hl(shown) } }),
+              h('button', { type: 'button', className: 'copy', onClick: () => copy(text) }, copied === text ? 'Copied' : 'Copy'))))),
+
+        h('h2', null, 'Examples'),
+        h('section', { className: 'block' },
+          h('div', { className: 'panel' },
+            h('div', { className: 'buttons' },
+              EXAMPLES.map((ex) => h('button', {
+                key: ex.id, type: 'button', className: 'btn',
+                onClick: () => run(ex),
+              }, h('span', { className: 'dot', style: { background: ex.dot } }), ex.label)))),
+          h('div', { className: 'code', 'aria-live': 'polite' }, h('pre', { dangerouslySetInnerHTML: { __html: hl(example.code) } }))),
+
+        h('h2', null, 'Options'),
+        h('section', { className: 'block flip' },
+          h('div', { className: 'code' }, h('pre', { dangerouslySetInnerHTML: { __html: hl(toaster) } })),
+          h('div', { className: 'panel' },
+            h('p', { className: 'sub' }, 'Position'),
+            h('div', { className: 'buttons positions' },
+              POSITIONS.map((p) => h('button', { key: p, type: 'button', className: 'btn', 'aria-pressed': p === position, onClick: () => move(p) }, p))),
+            h('p', { className: 'sub' }, 'Settings'),
+            h('div', { className: 'buttons' },
+              OPTIONS.map((o) => h('button', { key: o.id, type: 'button', className: 'btn toggle', 'aria-pressed': o.on, onClick: () => flip(o) },
+                h('span', { className: 'dot' }), o.label))))),
+
+        h('footer', null,
+          h('span', null, 'MIT licensed. Made by Islomjon.'),
+          h('span', null,
+            h('a', { href: 'https://github.com/ergashev2000/react-tostack', target: '_blank', rel: 'noreferrer' }, 'GitHub'),
+            '  ',
+            h('a', { href: 'https://github.com/ergashev2000/react-tostack#readme', target: '_blank', rel: 'noreferrer' }, 'Docs')))));
+  }
+
+  ReactDOM.createRoot(document.getElementById('app')).render(h(App));
+</script>
+</body>
+</html>

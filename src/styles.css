@@ -1,0 +1,233 @@
+/* react-tostack · Lume — light, glass and spring motion */
+.tostack-root {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2147483000;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  container-type: size;
+  --tostack-maxw: min(380px, calc(100cqw - 24px));
+  --tostack-minw: min(300px, calc(100cqw - 24px));
+  --tostack-safe-top: env(safe-area-inset-top, 0px);
+  --tostack-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --tostack-blur: 26px;
+
+  /* Lume · dark */
+  --tostack-bg: rgba(24, 24, 28, 0.72);
+  --tostack-solid: #000000;
+  --tostack-fg: #f5f5f7;
+  --tostack-fg2: rgba(235, 235, 245, 0.62);
+  --tostack-hairline: rgba(255, 255, 255, 0.10);
+  --tostack-spec: rgba(255, 255, 255, 0.34);
+  --tostack-btn: rgba(255, 255, 255, 0.12);
+  --tostack-btn-hover: rgba(255, 255, 255, 0.2);
+  --tostack-drop: rgba(0, 0, 0, 0.42);
+  --tostack-lume: #ffb547;
+  --tostack-on-lume: #1f1405;
+  --tostack-green: #30d158;
+  --tostack-mint: #63e6e2;
+  --tostack-teal: #40c8e0;
+  --tostack-blue: #0a84ff;
+  --tostack-indigo: #5e5ce6;
+  --tostack-pink: #ff375f;
+  --tostack-red: #ff453a;
+  --tostack-orange: #ff9f0a;
+  --tostack-yellow: #ffd60a;
+}
+.tostack-root.tostack-contained { position: absolute; }
+.tostack-root[data-theme="light"] {
+  /* Lume · light */
+  --tostack-bg: rgba(255, 255, 255, 0.72);
+  --tostack-solid: #ffffff;
+  --tostack-fg: #0b0b0f;
+  --tostack-fg2: rgba(60, 60, 67, 0.66);
+  --tostack-hairline: rgba(11, 11, 15, 0.08);
+  --tostack-spec: rgba(255, 255, 255, 0.95);
+  --tostack-btn: rgba(120, 120, 128, 0.12);
+  --tostack-btn-hover: rgba(120, 120, 128, 0.2);
+  --tostack-drop: rgba(28, 24, 18, 0.16);
+  --tostack-lume: #f5a524;
+  --tostack-on-lume: #1f1405;
+  --tostack-green: #34c759;
+  --tostack-mint: #00c7be;
+  --tostack-teal: #30b0c7;
+  --tostack-blue: #007aff;
+  --tostack-indigo: #5856d6;
+  --tostack-pink: #ff2d55;
+  --tostack-red: #ff3b30;
+  --tostack-orange: #ff9500;
+  --tostack-yellow: #ffcc00;
+}
+
+.tostack-t {
+  position: absolute;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  will-change: transform;
+  color: var(--tostack-fg);
+  --tostack-fill: var(--tostack-bg);
+  --tostack-accent: var(--tostack-lume);
+  --tostack-on-accent: #ffffff;
+}
+.tostack-t[data-material="solid"] { --tostack-fill: var(--tostack-solid); }
+.tostack-t[data-pos$="left"] { left: 0; }
+.tostack-t[data-pos$="right"] { right: 0; }
+.tostack-t[data-pos$="center"] { left: 50%; }
+.tostack-t[data-pos^="top"] { top: 0; }
+.tostack-t[data-pos^="bottom"] { bottom: 0; }
+
+/* Glass: blurs what is behind the toast, clipped to the exact shape every frame. */
+.tostack-mat {
+  position: absolute;
+  left: 0;
+  top: 0;
+  -webkit-backdrop-filter: blur(var(--tostack-blur)) saturate(180%);
+  backdrop-filter: blur(var(--tostack-blur)) saturate(180%);
+}
+.tostack-t[data-material="solid"] .tostack-mat { display: none; }
+.tostack-t.is-flip .tostack-mat { transform: scaleY(-1); }
+
+.tostack-svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: visible;
+  filter: drop-shadow(0 12px 30px var(--tostack-drop)) drop-shadow(0 1px 2px var(--tostack-drop));
+}
+.tostack-t.is-flip .tostack-svg { transform: scaleY(-1); }
+.tostack-fill { fill: var(--tostack-fill); }
+.tostack-spec { fill: none; stroke-width: 1; }
+.tostack-line { fill: none; stroke-width: 1.25; stroke-linecap: round; }
+.tostack-glow { fill: none; stroke-width: 5; opacity: 0.55; }
+.tostack-t[data-glow="off"] .tostack-glow,
+.tostack-t[data-glow="off"] .tostack-line { display: none; }
+.tostack-t[data-glow="on"] .tostack-spec { display: none; }
+
+.tostack-clip { position: absolute; top: 0; overflow: hidden; }
+.tostack-c {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: max-content;
+  min-width: var(--tostack-minw);
+  max-width: var(--tostack-maxw);
+  box-sizing: border-box;
+  transform: translateX(-50%);
+  transition:
+    opacity 0.26s ease,
+    filter 0.34s ease,
+    transform 0.5s cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+.tostack-t.is-flip .tostack-c { top: auto; bottom: 0; }
+.tostack-t.is-attached:not(.is-flip) .tostack-c { padding-top: var(--tostack-safe-top); }
+.tostack-t.is-attached.is-flip .tostack-c { padding-bottom: var(--tostack-safe-bottom); }
+.tostack-c.is-in { opacity: 0; filter: blur(8px); transform: translateX(-50%) scale(0.92); }
+.tostack-c.is-out {
+  opacity: 0;
+  filter: blur(8px);
+  transform: translateX(-50%) scale(1.03);
+  transition-duration: 0.16s, 0.2s, 0.3s;
+}
+.tostack-c.is-x { width: var(--tostack-maxw); }
+
+.tostack-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 48px;
+  min-width: 132px;
+  padding: 0 18px 0 12px;
+  box-sizing: border-box;
+}
+.tostack-t.is-attached .tostack-row { height: 44px; padding: 0 18px 0 14px; }
+.tostack-ic { width: 24px; height: 24px; flex: none; display: grid; place-items: center; font-size: 19px; line-height: 1; }
+.tostack-ic > svg { width: 24px; height: 24px; display: block; animation: tostack-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.tostack-title {
+  min-width: 0;
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  letter-spacing: -0.24px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(var(--tostack-maxw) - 110px);
+}
+.tostack-c.is-x .tostack-title { white-space: normal; max-width: none; flex: 1; }
+.tostack-acc {
+  margin-left: auto;
+  padding-left: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--tostack-accent);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.tostack-x { padding: 0 16px 16px 46px; box-sizing: border-box; margin-top: -4px; }
+.tostack-desc { font-size: 14px; line-height: 19px; letter-spacing: -0.15px; color: var(--tostack-fg2); }
+.tostack-actions { display: flex; gap: 8px; margin-top: 12px; margin-left: -30px; }
+.tostack-btn {
+  flex: 1;
+  height: 38px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--tostack-btn);
+  color: var(--tostack-fg);
+  font: 600 14px/1 inherit;
+  font-family: inherit;
+  letter-spacing: -0.15px;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
+}
+.tostack-btn:hover { background: var(--tostack-btn-hover); }
+.tostack-btn:active { transform: scale(0.95); }
+.tostack-btn:focus-visible { outline: 2px solid var(--tostack-accent); outline-offset: 2px; }
+.tostack-btn.is-primary { background: var(--tostack-accent); color: var(--tostack-on-accent); }
+.tostack-btn.is-primary:hover { filter: brightness(1.08); }
+
+
+.tostack-close {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin: 0 -6px 0 auto;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--tostack-btn);
+  color: var(--tostack-fg2);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.tostack-acc + .tostack-close { margin-left: 10px; }
+.tostack-close:hover { background: var(--tostack-btn-hover); color: var(--tostack-fg); }
+.tostack-close:active { transform: scale(0.88); }
+.tostack-close:focus-visible { outline: 2px solid var(--tostack-accent); outline-offset: 2px; }
+
+/* icons */
+.tostack-check { stroke-dasharray: 16; stroke-dashoffset: 16; animation: tostack-draw 0.42s 0.12s cubic-bezier(0.65, 0, 0.35, 1) forwards; }
+.tostack-spin { animation: tostack-spin 0.9s steps(8) infinite; transform-origin: 12px 12px; }
+.tostack-shake { animation: tostack-shake 0.5s 0.1s ease both; }
+.tostack-rich .tostack-title { color: var(--tostack-accent); }
+
+@keyframes tostack-pop { from { transform: scale(0.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes tostack-draw { to { stroke-dashoffset: 0; } }
+@keyframes tostack-spin { to { transform: rotate(360deg); } }
+@keyframes tostack-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-2.5px); }
+  40% { transform: translateX(2.5px); }
+  60% { transform: translateX(-1.5px); }
+  80% { transform: translateX(1px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tostack-c, .tostack-btn { transition-duration: 0.01s !important; }
+  .tostack-ic > svg, .tostack-check, .tostack-shake { animation-duration: 0.01s !important; }
+}
