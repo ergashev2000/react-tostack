@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useRef, useEffect, useState, useLayoutEffect, useMemo, useId } from 'react';
 import { Motion } from './motion';
 import { resolveValue, toast as api } from './store';
 import { ErrorIcon, InfoIcon, LoaderIcon, SuccessIcon, WarningIcon } from './icons';
@@ -147,32 +148,32 @@ export function ToastView(props: ToastViewProps) {
   const bottom = position.startsWith('bottom');
   const center = position.endsWith('center');
 
-  const motion = React.useMemo(() => new Motion(props.stiffness, props.damping), []);
+  const motion = useMemo(() => new Motion(props.stiffness, props.damping), []);
   motion.island = island;
   motion.attached = island;
   motion.bottom = bottom;
   motion.center = center;
 
-  const rootRef = React.useRef<HTMLDivElement>(null);
-  const svgRef = React.useRef<SVGSVGElement>(null);
-  const fillRef = React.useRef<SVGPathElement>(null);
-  const lineRef = React.useRef<SVGPathElement>(null);
-  const glowRef = React.useRef<SVGPathElement>(null);
-  const specRef = React.useRef<SVGPathElement>(null);
-  const matRef = React.useRef<HTMLDivElement>(null);
-  const clipRef = React.useRef<HTMLDivElement>(null);
-  const layerEls = React.useRef(new Map<string, HTMLDivElement>());
+  const rootRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const fillRef = useRef<SVGPathElement>(null);
+  const lineRef = useRef<SVGPathElement>(null);
+  const glowRef = useRef<SVGPathElement>(null);
+  const specRef = useRef<SVGPathElement>(null);
+  const matRef = useRef<HTMLDivElement>(null);
+  const clipRef = useRef<HTMLDivElement>(null);
+  const layerEls = useRef(new Map<string, HTMLDivElement>());
 
-  const gid = 'tostack-g' + React.useId().replace(/[^a-zA-Z0-9]/g, '');
+  const gid = 'tostack-g' + useId().replace(/[^a-zA-Z0-9]/g, '');
 
-  const [exp, setExp] = React.useState<{ id: string; on: boolean } | null>(null);
+  const [exp, setExp] = useState<{ id: string; on: boolean } | null>(null);
   const expanded = exp && exp.id === t.id ? exp.on : !!t.expanded;
   const contentKey = `${t.id}:${t.rev}:${expanded ? 1 : 0}`;
 
-  const [layers, setLayers] = React.useState<Layer[]>(() => [{ key: contentKey, t, expanded }]);
+  const [layers, setLayers] = useState<Layer[]>(() => [{ key: contentKey, t, expanded }]);
 
   // New content: keep the old layer to blur it out while the new one blurs in.
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     setLayers((ls) =>
       ls[ls.length - 1].key === contentKey
         ? ls
@@ -180,13 +181,13 @@ export function ToastView(props: ToastViewProps) {
     );
   }, [contentKey]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!layers.some((l) => l.out)) return;
     const id = setTimeout(() => setLayers((ls) => ls.filter((l) => !l.out)), 320);
     return () => clearTimeout(id);
   }, [layers]);
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     motion.els = {
       root: rootRef.current,
       svg: svgRef.current,
@@ -205,7 +206,7 @@ export function ToastView(props: ToastViewProps) {
 
   // Measure the newest layer and spring the surface to fit it.
   const newest = layers[layers.length - 1];
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     const el = layerEls.current.get(newest.key);
     if (!el) return;
     const measure = () => {
@@ -225,13 +226,13 @@ export function ToastView(props: ToastViewProps) {
   }, [newest.key, island]);
 
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (exiting) motion.exit(onExited);
     else motion.revive();
   }, [exiting]);
 
   // Expanded toasts hold the timers until collapsed.
-  React.useEffect(() => {
+  useEffect(() => {
     hold('x:' + t.id, expanded);
     return () => hold('x:' + t.id, false);
   }, [expanded, t.id]);
@@ -239,7 +240,7 @@ export function ToastView(props: ToastViewProps) {
   // Hover is tracked per view, not per toast: the island view swaps toasts while the pointer
   // stays put, and a toast can vanish under the pointer without a pointerleave.
   const hoverKey = 'hover:' + gid;
-  const hovered = React.useRef(false);
+  const hovered = useRef(false);
   const setHover = (on: boolean) => {
     if (hovered.current === on) return;
     hovered.current = on;
@@ -247,10 +248,10 @@ export function ToastView(props: ToastViewProps) {
   };
 
   // Pointer: tap to expand, swipe toward the edge (or sideways) to dismiss.
-  const drag = React.useRef<{ x: number; y: number; t: number; moved: boolean; id: number } | null>(null);
+  const drag = useRef<{ x: number; y: number; t: number; moved: boolean; id: number } | null>(null);
 
   // Never leave a hover or drag hold behind, or timers would stay paused and the stack open.
-  React.useEffect(
+  useEffect(
     () => () => {
       if (hovered.current) hold(hoverKey, false);
       if (drag.current?.moved) hold('drag', false);
@@ -259,7 +260,7 @@ export function ToastView(props: ToastViewProps) {
   );
 
   // A new toast in the island starts centred, even if the last one was flung away.
-  React.useEffect(() => {
+  useEffect(() => {
     if (island) motion.release();
   }, [t.id]);
   const onPointerDown = (e: React.PointerEvent) => {

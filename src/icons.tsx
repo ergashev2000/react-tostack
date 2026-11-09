@@ -1,4 +1,3 @@
-import * as React from 'react';
 import type { IconTheme } from './types';
 
 interface IconProps {

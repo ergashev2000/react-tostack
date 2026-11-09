@@ -1,6 +1,7 @@
 import * as React from 'react';
+import { useRef, useEffect, useState, useCallback, useLayoutEffect, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
-import css from './styles.css';
+import css from './styles.css?inline';
 import { store, toast as api } from './store';
 import type { Motion } from './motion';
 import { ToastView, type ResolvedToast } from './ToastView';
@@ -29,11 +30,11 @@ const POSITIONS: ToastPosition[] = [
 
 /** Subscribe to the toast list. Use it to build your own toast UI. */
 export function useToasts(): Toast[] {
-  return React.useSyncExternalStore(store.subscribe, store.get, store.get);
+  return useSyncExternalStore(store.subscribe, store.get, store.get);
 }
 
 // Layout effects warn during server rendering; the server has no layout to measure anyway.
-const useIsoLayoutEffect = typeof window !== 'undefined' ? React.useLayoutEffect : React.useEffect;
+const useIsoLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 function useCss() {
   useIsoLayoutEffect(() => {
@@ -46,8 +47,8 @@ function useCss() {
 }
 
 function useTheme(theme: Theme): 'light' | 'dark' {
-  const [system, setSystem] = React.useState<'light' | 'dark'>('dark');
-  React.useEffect(() => {
+  const [system, setSystem] = useState<'light' | 'dark'>('dark');
+  useEffect(() => {
     if (theme !== 'system' || typeof matchMedia === 'undefined') return;
     const mq = matchMedia('(prefers-color-scheme: dark)');
     const update = () => setSystem(mq.matches ? 'dark' : 'light');
@@ -59,8 +60,8 @@ function useTheme(theme: Theme): 'light' | 'dark' {
 }
 
 function useHidden() {
-  const [hidden, setHidden] = React.useState(false);
-  React.useEffect(() => {
+  const [hidden, setHidden] = useState(false);
+  useEffect(() => {
     const update = () => setHidden(document.visibilityState === 'hidden');
     document.addEventListener('visibilitychange', update);
     return () => document.removeEventListener('visibilitychange', update);
@@ -121,7 +122,7 @@ function Lane(props: LaneProps) {
   const waiting = live.slice(max);
 
   // Queue limit: drop the oldest waiting toasts, but never errors or loading ones.
-  React.useEffect(() => {
+  useEffect(() => {
     let extra = waiting.length - Math.max(0, props.maxQueue);
     for (let i = waiting.length - 1; i >= 0 && extra > 0; i--) {
       const t = waiting[i];
@@ -132,10 +133,10 @@ function Lane(props: LaneProps) {
   });
 
   // Fan out on hover; a short delay on leave so crossing the gutter does not collapse it.
-  const [open, setOpen] = React.useState(false);
-  const hovers = React.useRef(new Set<string>());
-  const leaveTimer = React.useRef<ReturnType<typeof setTimeout>>();
-  const laneHold = React.useCallback(
+  const [open, setOpen] = useState(false);
+  const hovers = useRef(new Set<string>());
+  const leaveTimer = useRef<ReturnType<typeof setTimeout>>();
+  const laneHold = useCallback(
     (key: string, on: boolean) => {
       hold(key, on);
       if (!key.startsWith('hover:')) return;
@@ -147,17 +148,17 @@ function Lane(props: LaneProps) {
     },
     [hold],
   );
-  React.useEffect(() => () => clearTimeout(leaveTimer.current), []);
+  useEffect(() => () => clearTimeout(leaveTimer.current), []);
 
   const layered = shown.length > 1;
   const expanded = open && layered;
-  React.useEffect(() => {
+  useEffect(() => {
     hold('open:' + position, expanded);
     return () => hold('open:' + position, false);
   }, [expanded]);
 
   // Touch: a tap opens the stack, a tap anywhere else closes it.
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open) return;
     const onDown = (e: PointerEvent) => {
       if (e.pointerType === 'mouse') return;
@@ -166,11 +167,11 @@ function Lane(props: LaneProps) {
     document.addEventListener('pointerdown', onDown, true);
     return () => document.removeEventListener('pointerdown', onDown, true);
   }, [open]);
-  const openRef = React.useRef(open);
+  const openRef = useRef(open);
   openRef.current = open;
-  const layeredRef = React.useRef(layered);
+  const layeredRef = useRef(layered);
   layeredRef.current = layered;
-  const onTapStack = React.useCallback(() => {
+  const onTapStack = useCallback(() => {
     if (!layeredRef.current || openRef.current) return false;
     setOpen(true);
     return true;
@@ -178,10 +179,10 @@ function Lane(props: LaneProps) {
 
   // Island: the front toast is the attached island; it keeps showing while it collapses.
   const front = island ? shown[0] : undefined;
-  const lastFront = React.useRef<ResolvedToast | null>(null);
+  const lastFront = useRef<ResolvedToast | null>(null);
   if (front) lastFront.current = front;
   const islandToast = island ? front ?? lastFront.current : null;
-  const [gen, setGen] = React.useState(0);
+  const [gen, setGen] = useState(0);
 
   // Everything else is a layer: shown toasts, plus dismissed ones animating out.
   const shownIds = new Set(shown.map((t) => t.id));
@@ -189,14 +190,14 @@ function Lane(props: LaneProps) {
     t.visible ? shownIds.has(t.id) && t.id !== front?.id : t.id !== islandToast?.id,
   );
 
-  const motions = React.useRef(new Map<string, Motion>());
-  const layersRef = React.useRef(layers);
+  const motions = useRef(new Map<string, Motion>());
+  const layersRef = useRef(layers);
   layersRef.current = layers;
-  const expandedRef = React.useRef(expanded);
+  const expandedRef = useRef(expanded);
   expandedRef.current = expanded;
   const align = position.endsWith('left') ? 1 : position.endsWith('right') ? -1 : 0;
 
-  const relayout = React.useCallback(() => {
+  const relayout = useCallback(() => {
     const exp = expandedRef.current;
     const list = layersRef.current.filter((t) => t.visible);
     const ordered = exp && reverseOrder ? [...list].reverse() : list;
@@ -250,7 +251,7 @@ function Lane(props: LaneProps) {
     });
   }, [gutter, reverseOrder, island, align]);
 
-  const register = React.useCallback(
+  const register = useCallback(
     (id: string, m: Motion | null) => {
       if (m) {
         motions.current.set(id, m);
@@ -260,9 +261,9 @@ function Lane(props: LaneProps) {
     },
     [relayout],
   );
-  const registerIsland = React.useCallback((_: string, m: Motion | null) => register(ISLAND, m), [register]);
+  const registerIsland = useCallback((_: string, m: Motion | null) => register(ISLAND, m), [register]);
 
-  React.useLayoutEffect(relayout);
+  useLayoutEffect(relayout);
 
   return (
     <>
@@ -335,12 +336,12 @@ export function Toaster(props: ToasterProps) {
   const hidden = useHidden();
   useCss();
 
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => setMounted(true), []);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
-  const holds = React.useRef(new Set<string>());
-  const [held, setHeld] = React.useState(0);
-  const hold = React.useCallback((key: string, on: boolean) => {
+  const holds = useRef(new Set<string>());
+  const [held, setHeld] = useState(0);
+  const hold = useCallback((key: string, on: boolean) => {
     const s = holds.current;
     if (on === s.has(key)) return;
     if (on) s.add(key);
@@ -366,10 +367,10 @@ export function Toaster(props: ToasterProps) {
   });
 
   // Timers: pause while hovered, dragged, expanded or the tab is hidden.
-  const timers = React.useRef(
+  const timers = useRef(
     new Map<string, { rev: number; left: number; start: number | null; h?: ReturnType<typeof setTimeout> }>(),
   );
-  React.useEffect(() => {
+  useEffect(() => {
     const now = Date.now();
     const paused = held > 0 || hidden;
     const seen = new Set<string>();
@@ -403,7 +404,7 @@ export function Toaster(props: ToasterProps) {
     });
   });
 
-  React.useEffect(
+  useEffect(
     () => () => {
       timers.current.forEach((r) => r.h && clearTimeout(r.h));
       timers.current.clear();
@@ -411,7 +412,7 @@ export function Toaster(props: ToasterProps) {
     [],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return;
       const top = store.get().find((t) => t.visible);
