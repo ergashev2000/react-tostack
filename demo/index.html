@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'" />
+<meta name="referrer" content="strict-origin-when-cross-origin" />
 <title>react-tostack: iOS Dynamic Island toasts for React</title>
 <meta name="description" content="Toast notifications for React and TypeScript that grow out of the screen edge like the iOS Dynamic Island, morph on springs and stack up to three." />
 <meta name="robots" content="index, follow" />
@@ -165,7 +167,7 @@
 <div id="app">
   <main class="page">
     <header class="hero">
-      <span class="version">Version 0.1.0, MIT</span>
+      <span class="version">Version 0.1.1, MIT</span>
       <h1>react-tostack</h1>
       <p>Toasts for React that grow out of the top of the screen like the iOS Dynamic Island, and change shape to fit each message.</p>
       <div class="cta"><a class="big plain" href="https://github.com/ergashev2000/react-tostack">GitHub</a></div>
@@ -188,8 +190,8 @@
   </main>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js" integrity="sha512-QVs8Lo43F9lSuBykadDb0oSXDL/BbZ588urWVCRwSIoewQv/Ewg1f84mK3U790bZ0FfhFa1YSQUmIhG+pIRKeg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js" integrity="sha512-6a1107rTlA4gYpgHAqbwLAtxmWipBdJFcq8y5S/aTge3Bp+VAklABm2LO+Kg51vOWR9JMZq1Ovjl5tpluNpTeQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="./tostack.iife.js"></script>
 <script>
   const { useState } = React;
@@ -345,7 +347,7 @@
       }),
       h('main', { className: 'page' },
         h('header', { className: 'hero' },
-          h('span', { className: 'version' }, 'Version 0.1.0, MIT'),
+          h('span', { className: 'version' }, 'Version 0.1.1, MIT'),
           h('h1', null, 'react-tostack'),
           h('p', null, 'Toasts for React that grow out of the top of the screen like the iOS Dynamic Island, and change shape to fit each message.'),
           h('div', { className: 'cta' },
