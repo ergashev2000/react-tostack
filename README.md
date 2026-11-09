@@ -1,5 +1,13 @@
 # react-tostack
 
+<p align="center">
+  <a href="https://www.npmjs.com/package/react-tostack"><img src="https://img.shields.io/npm/v/react-tostack?color=d7fe03&labelColor=000" alt="npm version" /></a>
+  <a href="https://www.npmjs.com/package/react-tostack"><img src="https://img.shields.io/npm/dm/react-tostack?color=d7fe03&labelColor=000" alt="npm downloads" /></a>
+  <a href="https://bundlephobia.com/package/react-tostack"><img src="https://img.shields.io/bundlephobia/minzip/react-tostack?color=d7fe03&labelColor=000&label=gzip" alt="gzip size" /></a>
+  <img src="https://img.shields.io/npm/types/react-tostack?color=d7fe03&labelColor=000" alt="TypeScript types included" />
+  <a href="LICENSE"><img src="https://img.shields.io/npm/l/react-tostack?color=d7fe03&labelColor=000" alt="MIT license" /></a>
+</p>
+
 Toasts made of light and glass. A Dynamic Island that morphs between messages on spring physics, closes with one tap, and expands for details.
 
 <p align="center">
