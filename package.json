@@ -1,7 +1,7 @@
 {
   "name": "react-tostack",
   "version": "0.1.0",
-  "description": "iOS Dynamic Island style toasts for React. Spring physics, swipe to dismiss, light & dark.",
+  "description": "iOS Dynamic Island style toasts for React. Spring physics, stacking, glass surfaces, light and dark themes. Written in TypeScript.",
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -9,11 +9,17 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     },
-    "./styles.css": "./dist/styles.css"
+    "./styles.css": "./dist/styles.css",
+    "./package.json": "./package.json"
   },
   "files": [
     "dist",
@@ -24,14 +30,20 @@
   "keywords": [
     "react",
     "toast",
+    "toaster",
     "notification",
+    "notifications",
     "dynamic-island",
     "ios",
-    "typescript"
+    "snackbar",
+    "typescript",
+    "react-hot-toast",
+    "sonner"
   ],
   "scripts": {
     "build": "tsup && node build-demo.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run typecheck && npm run build"
   },
   "peerDependencies": {
     "react": ">=18",
@@ -56,5 +68,11 @@
   },
   "overrides": {
     "esbuild": "$esbuild"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

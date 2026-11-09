@@ -3,10 +3,10 @@
 Toasts made of light and glass. A Dynamic Island that morphs between messages on spring physics, closes with one tap, and expands for details.
 
 <p align="center">
-  <img src="media/demo.gif" alt="An island grows from the top edge, morphs from Deploying to Deployed, stacks three toasts, fans them out on hover, and opens a message with a Reply button" width="960" />
+  <img src="https://raw.githubusercontent.com/ergashev2000/react-tostack/main/media/demo.gif" alt="An island grows from the top edge, morphs from Deploying to Deployed, stacks three toasts, fans them out on hover, and opens a message with a Reply button" width="960" />
 </p>
 
-<p align="center"><a href="https://react-tostack.islomjon.uz"><b>Live demo</b></a> &nbsp;·&nbsp; <a href="media/demo.mp4">Watch in HD</a></p>
+<p align="center"><a href="https://react-tostack.islomjon.uz"><b>Live demo</b></a> &nbsp;·&nbsp; <a href="https://github.com/ergashev2000/react-tostack/raw/main/media/demo.mp4">Watch in HD</a></p>
 
 Styled with **Lume**, a light-first design language: frosted glass that blurs the page behind it, a specular edge on top, one warm lamp accent, and motion on springs.
 
